@@ -2,11 +2,15 @@
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, user-scalable=no"
+  />
   <title>MindAR Stable Demo</title>
 
   <!-- A-Frame -->
   <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+
   <!-- MindAR -->
   <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
 
@@ -19,28 +23,10 @@
       overflow: hidden;
     }
   </style>
-
-  <script>
-    /* ✅ 一定要在 scene 建立前註冊 */
-    AFRAME.registerComponent("smooth-follow", {
-      schema: { speed: { type: "number", default: 0.15 } },
-      init() {
-        this.targetPos = new THREE.Vector3();
-        this.targetQuat = new THREE.Quaternion();
-      },
-      tick() {
-        const obj = this.el.object3D;
-        const parent = this.el.parentEl.object3D;
-        parent.getWorldPosition(this.targetPos);
-        parent.getWorldQuaternion(this.targetQuat);
-        obj.position.lerp(this.targetPos, this.data.speed);
-        obj.quaternion.slerp(this.targetQuat, this.data.speed);
-      }
-    });
-  </script>
 </head>
 
 <body>
+
 <a-scene
   mindar-image="imageTargetSrc: targets.mind;"
   embedded
@@ -49,82 +35,130 @@
   device-orientation-permission-ui="enabled: false"
 >
 
-  <!-- 📸 Camera（Android 穩定可點版） -->
+  <!-- 📸 相機：不要 cursor 放 scene，用 camera 最穩 -->
   <a-camera
     position="0 0 0"
     look-controls="enabled: false"
     cursor="rayOrigin: mouse; fuse: false"
-    raycaster="objects: .clickable; far: 20"
+    raycaster="objects: .clickable"
   ></a-camera>
 
-  <!-- ===== Target 0 ===== -->
+  <!-- ================= TARGET 0 ================= -->
   <a-entity mindar-image-target="targetIndex: 0">
-    <a-entity smooth-follow>
+  <a-entity smooth-follow>
 
-      <!-- 主圖 -->
-      <a-image
-        id="mainImage"
-        src="main1.png"
-        position="0 0.8 0"
-        width="1"
-        height="1">
-      </a-image>
+    <!-- 主圖 -->
+    <a-image
+      id="mainImage"
+      src="main1.png"
+      position="0 0.8 0"
+      width="1"
+      height="1"
+    ></a-image>
 
-      <a-plane
-        id="mainHit"
-        class="clickable"
-        position="0 0.8 0.5"
-        width="1.2"
-        height="1.2"
-        material="opacity: 0">
-      </a-plane>
+    <!-- 點擊用透明 hit box（一定要比圖「更靠近鏡頭」） -->
+    <a-plane
+      id="mainHit"
+      position="0 0.6 0.3"
+      width="1.1"
+      height="1.1"
+      material="opacity: 0"
+      class="clickable"
+    ></a-plane>
 
-      <!-- sub1 -->
-      <a-image src="sub1.png" position="-0.8 -0.2 0" width="0.5" height="0.5"></a-image>
-      <a-plane
-        id="sub1Hit"
-        class="clickable"
-        position="-0.8 -0.2 0.5"
-        width="0.7"
-        height="0.7"
-        material="opacity: 0">
-      </a-plane>
+        <a-image
+      src="sub1.png"
+      position="-0.8 -0.2 0.3"
+      width="0.5"
+      height="0.5"
+    ></a-image>
 
-      <!-- sub2 -->
-      <a-image src="sub2.png" position="0.8 -0.2 0" width="0.5" height="0.5"></a-image>
-      <a-plane
-        id="sub2Hit"
-        class="clickable"
-        position="0.8 -0.2 0.5"
-        width="0.7"
-        height="0.7"
-        material="opacity: 0">
-      </a-plane>
+    <a-plane
+      id="sub1Hit"
+      position="-0.8 -0.2 0.6"
+      width="0.7"
+      height="0.7"
+      material="opacity: 0"
+      class="clickable"
+    ></a-plane>
 
-      <!-- IG -->
-      <a-image src="ig.png" position="0 -0.6 0" width="0.3" height="0.3"></a-image>
-      <a-plane
-        id="igHit"
-        class="clickable"
-        position="0 -0.6 0.5"
-        width="0.5"
-        height="0.5"
-        material="opacity: 0">
-      </a-plane>
+    <a-image
+      src="sub2.png"
+      position="0.8 -0.2 0.3"
+      width="0.5"
+      height="0.5"
+    ></a-image>
 
-    </a-entity>
+    <a-plane
+      id="sub2Hit"
+      position="0.8 -0.2 0.6"
+      width="0.7"
+      height="0.7"
+      material="opacity: 0"
+      class="clickable"
+    ></a-plane>
+
+    <!-- IG icon -->
+    <a-image
+      src="ig.png"
+      position="0 -0.6 0"
+      width="0.3"
+      height="0.3"
+    ></a-image>
+
+    <a-plane
+      id="igHit"
+      position="0 -0.6 0.3"
+      width="0.5"
+      height="0.5"
+      material="opacity: 0"
+      class="clickable"
+    ></a-plane>
+
   </a-entity>
+
 </a-scene>
 
 <script>
-  /* 點擊行為 */
+/* ========= 等場景真的 ready 再綁事件（關鍵） ========= */
+document.querySelector("a-scene").addEventListener("loaded", () => {
+
+  // 防抖
+  const content = document.getElementById("content");
+  let locked = false;
+
+  document.querySelector("[mindar-image-target]").addEventListener("targetFound", () => {
+    if (locked) return;
+    locked = true;
+    content.setAttribute("visible", true);
+  });
+
+  AFRAME.registerComponent("smooth-follow", {
+    schema: { speed: { type: "number", default: 0.15 } },
+    init() {
+      this.targetPos = new THREE.Vector3();
+      this.targetQuat = new THREE.Quaternion();
+    },
+    tick() {
+      const obj = this.el.object3D;
+      const parent = this.el.parentEl.object3D;
+
+      parent.getWorldPosition(this.targetPos);
+      parent.getWorldQuaternion(this.targetQuat);
+
+      obj.position.lerp(this.targetPos, this.data.speed);
+      obj.quaternion.slerp(this.targetQuat, this.data.speed);
+    }
+  });
+
+  // 主圖點擊放大
   const mainImage = document.getElementById("mainImage");
   const mainHit = document.getElementById("mainHit");
   let zoom = false;
 
   mainHit.addEventListener("click", () => {
     mainImage.setAttribute(
-      "animation__scale",
+      "animation",
       zoom
         ? "property: scale; to: 1 1 1; dur: 250"
         : "property: scale; to: 1.4 1.4 1.4; dur: 250"
@@ -132,9 +166,13 @@
     zoom = !zoom;
   });
 
+  // IG 連結
   document.getElementById("igHit").addEventListener("click", () => {
     window.open("https://www.instagram.com/kaz._.too/", "_blank");
   });
+
+});
 </script>
+
 </body>
 </html>
