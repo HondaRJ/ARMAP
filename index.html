@@ -59,10 +59,10 @@
     <!-- 點擊用透明 hit box（一定要比圖「更靠近鏡頭」） -->
     <a-plane
       id="mainHit"
-      position="0 0.6 0.3"
+      position="0 0.6 0.5"
       width="1.1"
       height="1.1"
-      material="opacity: 0.001; transparent: true"
+      material="opacity: 0.001; transparent: true; depthTest: false; depthWrite: false"
       class="clickable"
     ></a-plane>
 
@@ -75,10 +75,10 @@
 
     <a-plane
       id="sub1Hit"
-      position="-0.8 -0.2 0.6"
+      position="-0.8 -0.2 0.8"
       width="0.7"
       height="0.7"
-      material="opacity: 0.001; transparent: true"
+      material="opacity: 0.001; transparent: true; depthTest: false; depthWrite: false"
       class="clickable"
     ></a-plane>
 
@@ -91,10 +91,10 @@
 
     <a-plane
       id="sub2Hit"
-      position="0.8 -0.2 0.6"
+      position="0.8 -0.2 0.8"
       width="0.7"
       height="0.7"
-      material="opacity: 0.001; transparent: true"
+      material="opacity: 0.001; transparent: true; depthTest: false; depthWrite: false"
       class="clickable"
     ></a-plane>
 
@@ -108,10 +108,10 @@
 
     <a-plane
       id="igHit"
-      position="0 -0.6 0.3"
+      position="0 -0.6 0.8"
       width="0.5"
       height="0.5"
-      material="opacity: 0.001; transparent: true"
+      material="opacity: 0.001; transparent: true; depthTest: false; depthWrite: false"
       class="clickable"
     ></a-plane>
 
