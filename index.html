@@ -166,6 +166,28 @@ document.querySelector("a-scene").addEventListener("loaded", () => {
     zoom = !zoom;
   });
 
+/* ===== sub1 / sub2 點擊 ===== */
+const sub1Hit = document.getElementById("sub1Hit");
+const sub2Hit = document.getElementById("sub2Hit");
+
+function resetMain() {
+  zoom = false;
+  mainImage.setAttribute(
+    "animation",
+    "property: scale; to: 1 1 1; dur: 200"
+  );
+}
+
+sub1Hit.addEventListener("click", () => {
+  resetMain();
+  alert("你點了 sub1 👀（之後可換成連結）");
+});
+
+sub2Hit.addEventListener("click", () => {
+  resetMain();
+  alert("你點了 sub2 ✨（之後可換成連結）");
+});
+
   // IG 連結
   document.getElementById("igHit").addEventListener("click", () => {
     window.open("https://www.instagram.com/kaz._.too/", "_blank");
