@@ -50,8 +50,8 @@
     <!-- 主圖 -->
     <a-image
       id="mainImage"
-      src="main1.png"
-      position="0 0.8 0"
+      src="tenintro.png"
+      position="0 -0.8 0"
       width="1"
       height="1"
     ></a-image>
@@ -59,7 +59,7 @@
     <!-- 點擊用透明 hit box（一定要比圖「更靠近鏡頭」） -->
     <a-plane
       id="mainHit"
-      position="0 0.6 0.5"
+      position="0 -0.8 0.5"
       width="1.1"
       height="1.1"
       material="opacity: 0.001; transparent: true; depthTest: false; depthWrite: false"
@@ -67,15 +67,15 @@
     ></a-plane>
 
         <a-image
-      src="sub1.png"
-      position="-0.8 -0.2 0.3"
+      src="tennojisub1.png"
+      position="-0.8 0.8 0.3"
       width="0.5"
       height="0.5"
     ></a-image>
 
     <a-plane
       id="sub1Hit"
-      position="-0.8 -0.2 0.8"
+      position="-0.8 0.8 0.8"
       width="0.7"
       height="0.7"
       material="opacity: 0.001; transparent: true; depthTest: false; depthWrite: false"
@@ -83,15 +83,31 @@
     ></a-plane>
 
     <a-image
-      src="sub2.png"
-      position="0.8 -0.2 0.3"
+      src="tennojisub2.png"
+      position="0.8 0.5 0.3"
       width="0.5"
       height="0.5"
     ></a-image>
 
     <a-plane
       id="sub2Hit"
-      position="0.8 -0.2 0.8"
+      position="0.8 0.5 0.8"
+      width="0.7"
+      height="0.7"
+      material="opacity: 0.001; transparent: true; depthTest: false; depthWrite: false"
+      class="clickable"
+    ></a-plane>
+
+    <a-image
+      src="tennojisub3.png"
+      position="0.8 0.1 0.3"
+      width="0.5"
+      height="0.5"
+    ></a-image>
+
+    <a-plane
+      id="sub3Hit"
+      position="0.8 0.1 0.8"
       width="0.7"
       height="0.7"
       material="opacity: 0.001; transparent: true; depthTest: false; depthWrite: false"
@@ -101,14 +117,14 @@
     <!-- IG icon -->
     <a-image
       src="ig.png"
-      position="0 -0.6 0"
+      position="0 0 0"
       width="0.3"
       height="0.3"
     ></a-image>
 
     <a-plane
       id="igHit"
-      position="0 -0.6 0.8"
+      position="0 0 0.8"
       width="0.5"
       height="0.5"
       material="opacity: 0.001; transparent: true; depthTest: false; depthWrite: false"
