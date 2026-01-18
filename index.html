@@ -33,6 +33,7 @@
   renderer="antialias: true; alpha: true"
   vr-mode-ui="enabled: false"
   device-orientation-permission-ui="enabled: false"
+  raycaster="objects: .clickable"
 >
 
   <!-- 📸 相機：不要 cursor 放 scene，用 camera 最穩 -->
@@ -59,7 +60,7 @@
     <!-- 點擊用透明 hit box（一定要比圖「更靠近鏡頭」） -->
     <a-plane
       id="mainHit"
-      position="0 -1.2 0"
+      position="0 -1.2 0.5"
       width="3"
       height="1.2"
       material="opacity: 0.001; transparent: true; depthTest: false; depthWrite: false"
@@ -140,14 +141,19 @@
 document.querySelector("a-scene").addEventListener("loaded", () => {
 
   // 防抖
-  const content = document.getElementById("content");
-  let locked = false;
+const scene = document.querySelector("a-scene");
+const mindarSystem = scene.systems["mindar-image-system"];
 
-  document.querySelector("[mindar-image-target]").addEventListener("targetFound", () => {
-    if (locked) return;
-    locked = true;
-    content.setAttribute("visible", true);
-  });
+const target = document.querySelector('a-entity[mindar-image-target="targetIndex: 0"]');
+
+target.addEventListener("targetFound", () => {
+  if (paused) return;   // 如果已暫停，就不處理
+
+  paused = true;        // 進入「鎖定狀態」
+  mindarSystem.pause(); // ⛔ 真的把 MindAR 偵測暫停
+
+  console.log("Target found → tracking paused");
+});
 
   AFRAME.registerComponent("smooth-follow", {
     schema: { speed: { type: "number", default: 0.15 } },
@@ -185,6 +191,7 @@ document.querySelector("a-scene").addEventListener("loaded", () => {
 /* ===== sub1 / sub2 點擊 ===== */
 const sub1Hit = document.getElementById("sub1Hit");
 const sub2Hit = document.getElementById("sub2Hit");
+const sub3Hit = document.getElementById("sub3Hit");
 
 function resetMain() {
   zoom = false;
@@ -202,6 +209,10 @@ sub1Hit.addEventListener("click", () => {
 sub2Hit.addEventListener("click", () => {
   resetMain();
   alert("你點了 sub2 ✨（之後可換成連結）");
+});
+sub3Hit.addEventListener("click", () => {
+  resetMain();
+  alert("你點了 sub3 🌈");
 });
 
   // IG 連結
