@@ -2,10 +2,7 @@
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8" />
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0, user-scalable=no"
-  />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
   <title>MindAR Fawn Hotel Area Map</title>
 
   <!-- A-Frame -->
@@ -25,6 +22,8 @@
   </style>
 </head>
 
+<body>
+
 <div id="ar-status"
   style="
     position: fixed;
@@ -42,10 +41,8 @@
   🔍 偵測距離：-- cm
 </div>
 
-<body>
-
 <a-scene
-  mindar-image="imageTargetSrc: targets.mind;"
+  mindar-image="imageTargetSrc: ./targets.mind;"
   embedded
   renderer="antialias: true; alpha: true"
   vr-mode-ui="enabled: false"
@@ -53,154 +50,139 @@
   raycaster="objects: .clickable"
 >
 
-  <!-- 📸 相機：不要 cursor 放 scene，用 camera 最穩 -->
   <a-camera
-  position="0 0 0"
-  look-controls="enabled: false"
-  cursor="rayOrigin: mouse; fuse: false"
-  raycaster="objects: .clickable"
-></a-camera>
+    position="0 0 0"
+    look-controls="enabled: false"
+    cursor="rayOrigin: mouse; fuse: false"
+    raycaster="objects: .clickable"
+  ></a-camera>
 
-  <!-- ================= TARGET 0 ================= -->
   <a-entity mindar-image-target="targetIndex: 0">
-  <a-entity smooth-follow>
+    <a-entity smooth-follow>
 
-    <!-- 主圖 -->
-    <a-image
-      id="mainImage"
-      src="tenintro.png"
-      position="0 -1 0"
-      width="3"
-      height="1.2"
-    ></a-image>
+      <!-- 主圖 -->
+      <a-image
+        id="mainImage"
+        src="tenintro.png"
+        position="0 -1 0"
+        width="3"
+        height="1.2"
+      ></a-image>
 
-    <!-- 點擊用透明 hit box（一定要比圖「更靠近鏡頭」） -->
-    <a-plane
-      id="mainHit"
-      position="0 -1 0.5"
-      width="3"
-      height="1.2"
-      material="opacity: 0.001; transparent: true; depthTest: false; depthWrite: false"
-      class="clickable"
-    ></a-plane>
+      <!-- 點擊用透明 hit box（一定要比圖更靠近鏡頭） -->
+      <a-plane
+        id="mainHit"
+        position="0 -1 0.5"
+        width="3"
+        height="1.2"
+        material="opacity: 0.001; transparent: true; depthTest: false; depthWrite: false"
+        class="clickable"
+      ></a-plane>
 
-    <a-image
-      src="tennojisub1.jpg"
-      position="-1.2 1 0.0"
-      width="1.1"
-      height="1.1"
-    ></a-image>
+      <a-image
+        src="tennojisub1.jpg"
+        position="-1.2 1 0.0"
+        width="1.1"
+        height="1.1"
+      ></a-image>
 
-    <a-plane
-      id="sub1Hit"
-      position="-1.2 1 0.5"
-      width="1.2"
-      height="1.2"
-      material="opacity: 0.001; transparent: true; depthTest: false; depthWrite: false"
-      class="clickable"
-    ></a-plane>
+      <a-plane
+        id="sub1Hit"
+        position="-1.2 1 0.5"
+        width="1.2"
+        height="1.2"
+        material="opacity: 0.001; transparent: true; depthTest: false; depthWrite: false"
+        class="clickable"
+      ></a-plane>
 
-    <a-image
-      src="tennojisub2.jpg"
-      position="0 1 0.0"
-      width="1.1"
-      height="1.1"
-    ></a-image>
+      <a-image
+        src="tennojisub2.jpg"
+        position="0 1 0.0"
+        width="1.1"
+        height="1.1"
+      ></a-image>
 
-    <a-plane
-      id="sub2Hit"
-      position="0 1 0.5"
-      width="1.2"
-      height="1.2"
-      material="opacity: 0.001; transparent: true; depthTest: false; depthWrite: false"
-      class="clickable"
-    ></a-plane>
+      <a-plane
+        id="sub2Hit"
+        position="0 1 0.5"
+        width="1.2"
+        height="1.2"
+        material="opacity: 0.001; transparent: true; depthTest: false; depthWrite: false"
+        class="clickable"
+      ></a-plane>
 
-    <a-image
-      src="tennojisub3.jpg"
-      position="1.2 1 0.0"
-      width="1.1"
-      height="1.1"
-    ></a-image>
+      <a-image
+        src="tennojisub3.jpg"
+        position="1.2 1 0.0"
+        width="1.1"
+        height="1.1"
+      ></a-image>
 
-    <a-plane
-      id="sub3Hit"
-      position="1.2 1 0.5"
-      width="1.2"
-      height="1.2"
-      material="
-        color: red;
-        opacity: 0.3;
-        transparent: true;
-        depthTest: false;
-        depthWrite: false"
-      class="clickable"
-    ></a-plane>
+      <a-plane
+        id="sub3Hit"
+        position="1.2 1 0.5"
+        width="1.2"
+        height="1.2"
+        material="color: red; opacity: 0.3; transparent: true; depthTest: false; depthWrite: false"
+        class="clickable"
+      ></a-plane>
 
-    <!-- IG icon -->
-    <a-image
-      src="ig.png"
-      position="0 -2 0"
-      width="0.3"
-      height="0.3"
-    ></a-image>
+      <!-- IG icon -->
+      <a-image
+        src="ig.png"
+        position="0 -2 0"
+        width="0.3"
+        height="0.3"
+      ></a-image>
 
-    <a-plane
-      id="igHit"
-      position="0 -2 0.5"
-      width="0.5"
-      height="0.5"
-      material="opacity: 0.001; transparent: true; depthTest: false; depthWrite: false"
-      class="clickable"
-    ></a-plane>
+      <a-plane
+        id="igHit"
+        position="0 -2 0.5"
+        width="0.5"
+        height="0.5"
+        material="opacity: 0.001; transparent: true; depthTest: false; depthWrite: false"
+        class="clickable"
+      ></a-plane>
 
+    </a-entity>
   </a-entity>
-
 </a-scene>
 
 <script>
 document.querySelector("a-scene").addEventListener("loaded", () => {
 
   const scene = document.querySelector("a-scene");
-  const mindarSystem = scene.systems["mindar-image-system"];
   const target = document.querySelector('a-entity[mindar-image-target="targetIndex: 0"]');
   const statusBar = document.getElementById("ar-status");
 
   let cameraWorldPos = new THREE.Vector3();
   let targetWorldPos = new THREE.Vector3();
-
-  let locked = false;   // 「掃到就鎖住畫面」
-  let zoom = false;
-
-  // 🔥【重要】不要一開始就抓 camera，先宣告，等第一幀再拿
   let camera = null;
 
-  /* ========== 掃到時：不 pause()，只鎖畫面 ========== */
+  let locked = false;
+  let zoom = false;
+
+  /* ========== 目標找到時鎖住畫面（但不暫停 AR） ========== */
   target.addEventListener("targetFound", () => {
     locked = true;
-    console.log("Target found → visual locked (tracking still running)");
+    console.log("Target found → visual locked");
   });
 
-  /* ========== 點擊背景就解除鎖定 ========== */
   scene.addEventListener("click", () => {
     locked = false;
     console.log("Visual unlocked");
   });
 
-  /* ========== 穩定追蹤（鎖住時不抖） ========== */
   AFRAME.registerComponent("smooth-follow", {
     tick() {
+      if (!locked) return;
       const obj = this.el.object3D;
       const parent = this.el.parentEl.object3D;
-
-      if (locked) {
-        obj.position.copy(parent.position);
-        obj.quaternion.copy(parent.quaternion);
-      }
+      obj.position.copy(parent.position);
+      obj.quaternion.copy(parent.quaternion);
     }
   });
 
-  /* ========== 取得元素（只宣告一次） ========== */
   const mainImage = document.getElementById("mainImage");
   const mainHit   = document.getElementById("mainHit");
   const sub1Hit   = document.getElementById("sub1Hit");
@@ -213,9 +195,8 @@ document.querySelector("a-scene").addEventListener("loaded", () => {
     mainImage.setAttribute("scale", "1 1 1");
   }
 
-  /* ========== 主圖點擊放大 ========== */
   mainHit.addEventListener("click", (e) => {
-    e.stopPropagation(); // 重要：避免解除鎖定
+    e.stopPropagation();
     mainImage.setAttribute(
       "animation",
       zoom
@@ -225,7 +206,6 @@ document.querySelector("a-scene").addEventListener("loaded", () => {
     zoom = !zoom;
   });
 
-  /* ========== sub 按鈕 ========== */
   sub1Hit.addEventListener("click", (e) => {
     e.stopPropagation();
     resetMain();
@@ -244,34 +224,29 @@ document.querySelector("a-scene").addEventListener("loaded", () => {
     alert("你點了 sub3 🌈");
   });
 
-  /* ========== IG 連結 ========== */
   igHit.addEventListener("click", (e) => {
     e.stopPropagation();
     window.open("https://www.instagram.com/kaz._.too/", "_blank");
   });
 
-  /* ========== 🔥 修正版距離顯示（關鍵在這） ========== */
+  /* ========== 正確的距離顯示 ========== */
   scene.addEventListener("tick", () => {
 
-    // 👉 第一次 tick 才抓 camera（避免 null）
     if (!camera) {
       camera = document.querySelector("a-camera");
-      if (!camera) return; // 還沒準備好就先跳過
+      if (!camera) return;
     }
 
-    // 👉 沒掃到圖就顯示提示
     if (!target.object3D.visible) {
       statusBar.innerHTML = "⚠️ 尚未偵測到目標";
       return;
     }
 
-    // 👉 真的開始算距離
     camera.object3D.getWorldPosition(cameraWorldPos);
     target.object3D.getWorldPosition(targetWorldPos);
 
     const distanceMeters = cameraWorldPos.distanceTo(targetWorldPos);
 
-    // 防止奇怪數值
     if (isNaN(distanceMeters) || distanceMeters <= 0) {
       statusBar.innerHTML = "📏 計算中...";
       return;
