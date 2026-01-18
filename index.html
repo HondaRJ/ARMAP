@@ -164,7 +164,6 @@ document.querySelector("a-scene").addEventListener("loaded", () => {
   const scene = document.querySelector("a-scene");
   const mindarSystem = scene.systems["mindar-image-system"];
   const target = document.querySelector('a-entity[mindar-image-target="targetIndex: 0"]');
-  const camera = document.querySelector("a-camera");
   const statusBar = document.getElementById("ar-status");
 
   let cameraWorldPos = new THREE.Vector3();
@@ -172,6 +171,9 @@ document.querySelector("a-scene").addEventListener("loaded", () => {
 
   let locked = false;   // 「掃到就鎖住畫面」
   let zoom = false;
+
+  // 🔥【重要】不要一開始就抓 camera，先宣告，等第一幀再拿
+  let camera = null;
 
   /* ========== 掃到時：不 pause()，只鎖畫面 ========== */
   target.addEventListener("targetFound", () => {
@@ -248,19 +250,34 @@ document.querySelector("a-scene").addEventListener("loaded", () => {
     window.open("https://www.instagram.com/kaz._.too/", "_blank");
   });
 
-  /* ========== 距離顯示（會真的動） ========== */
+  /* ========== 🔥 修正版距離顯示（關鍵在這） ========== */
   scene.addEventListener("tick", () => {
+
+    // 👉 第一次 tick 才抓 camera（避免 null）
+    if (!camera) {
+      camera = document.querySelector("a-camera");
+      if (!camera) return; // 還沒準備好就先跳過
+    }
+
+    // 👉 沒掃到圖就顯示提示
     if (!target.object3D.visible) {
       statusBar.innerHTML = "⚠️ 尚未偵測到目標";
       return;
     }
 
+    // 👉 真的開始算距離
     camera.object3D.getWorldPosition(cameraWorldPos);
     target.object3D.getWorldPosition(targetWorldPos);
 
     const distanceMeters = cameraWorldPos.distanceTo(targetWorldPos);
-    const distanceCm = (distanceMeters * 100).toFixed(1);
 
+    // 防止奇怪數值
+    if (isNaN(distanceMeters) || distanceMeters <= 0) {
+      statusBar.innerHTML = "📏 計算中...";
+      return;
+    }
+
+    const distanceCm = (distanceMeters * 100).toFixed(1);
     statusBar.innerHTML = `📏 偵測距離：約 ${distanceCm} cm`;
   });
 
