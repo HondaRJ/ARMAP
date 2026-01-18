@@ -25,6 +25,23 @@
   </style>
 </head>
 
+<div id="ar-status"
+  style="
+    position: fixed;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0.7);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 20px;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    z-index: 9999;
+  ">
+  🔍 偵測距離：-- cm
+</div>
+
 <body>
 
 <a-scene
@@ -251,6 +268,32 @@ sub3Hit.addEventListener("click", () => {
     window.open("https://www.instagram.com/kaz._.too/", "_blank");
   });
 
+});
+
+/* ===== 偵測距離 ===== */
+const scene = document.querySelector("a-scene");
+const camera = document.querySelector("[camera]");
+const target = document.querySelector('a-entity[mindar-image-target="targetIndex: 0"]');
+const statusBar = document.getElementById("ar-status");
+
+let cameraWorldPos = new THREE.Vector3();
+let targetWorldPos = new THREE.Vector3();
+
+scene.addEventListener("loaded", () => {
+  scene.addEventListener("tick", () => {
+    if (!target.object3D.visible) {
+      statusBar.innerHTML = "⚠️ 尚未偵測到目標";
+      return;
+    }
+
+    camera.object3D.getWorldPosition(cameraWorldPos);
+    target.object3D.getWorldPosition(targetWorldPos);
+
+    const distanceMeters = cameraWorldPos.distanceTo(targetWorldPos);
+    const distanceCm = (distanceMeters * 100).toFixed(1);
+
+    statusBar.innerHTML = `📏 偵測距離：約 ${distanceCm} cm`;
+  });
 });
 </script>
 
