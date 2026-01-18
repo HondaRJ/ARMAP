@@ -270,17 +270,19 @@ sub3Hit.addEventListener("click", () => {
 
 });
 
-/* ===== 偵測距離 ===== */
+/* ===== 修正版：AR 偵測距離 ===== */
 const scene = document.querySelector("a-scene");
-const camera = document.querySelector("[camera]");
-const target = document.querySelector('a-entity[mindar-image-target="targetIndex: 0"]');
 const statusBar = document.getElementById("ar-status");
 
 let cameraWorldPos = new THREE.Vector3();
 let targetWorldPos = new THREE.Vector3();
 
 scene.addEventListener("loaded", () => {
+  const camera = document.querySelector("a-camera");
+  const target = document.querySelector('a-entity[mindar-image-target="targetIndex: 0"]');
+
   scene.addEventListener("tick", () => {
+    // 只要「曾經掃到過」，就顯示最後距離
     if (!target.object3D.visible) {
       statusBar.innerHTML = "⚠️ 尚未偵測到目標";
       return;
