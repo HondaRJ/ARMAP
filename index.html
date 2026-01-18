@@ -159,44 +159,46 @@
 </a-scene>
 
 <script>
-/* ========= 等場景真的 ready 再綁事件（關鍵） ========= */
 document.querySelector("a-scene").addEventListener("loaded", () => {
 
   const scene = document.querySelector("a-scene");
   const mindarSystem = scene.systems["mindar-image-system"];
   const target = document.querySelector('a-entity[mindar-image-target="targetIndex: 0"]');
+  const camera = document.querySelector("a-camera");
+  const statusBar = document.getElementById("ar-status");
 
-  let paused = false;
+  let cameraWorldPos = new THREE.Vector3();
+  let targetWorldPos = new THREE.Vector3();
+
+  let locked = false;   // 「掃到就鎖住畫面」
   let zoom = false;
 
-  /* ========== 掃到就停止追蹤 ========== */
+  /* ========== 掃到時：不 pause()，只鎖畫面 ========== */
   target.addEventListener("targetFound", () => {
-    if (paused) return;
-
-    paused = true;
-    mindarSystem.pause();   // 🔒 真的暫停 MindAR
-    console.log("Target found → tracking paused");
+    locked = true;
+    console.log("Target found → visual locked (tracking still running)");
   });
 
-  /* ========== 點一下才恢復追蹤 ========== */
-  function resumeTracking() {
-    paused = false;
-    mindarSystem.unpause(); // 🔓 重新啟動 MindAR
-    console.log("Tracking resumed");
-  }
+  /* ========== 點擊背景就解除鎖定 ========== */
+  scene.addEventListener("click", () => {
+    locked = false;
+    console.log("Visual unlocked");
+  });
 
-  /* ========== 讓內容「硬鎖」不平滑（不抖的關鍵） ========== */
+  /* ========== 穩定追蹤（鎖住時不抖） ========== */
   AFRAME.registerComponent("smooth-follow", {
     tick() {
       const obj = this.el.object3D;
       const parent = this.el.parentEl.object3D;
 
-      obj.position.copy(parent.position);
-      obj.quaternion.copy(parent.quaternion);
+      if (locked) {
+        obj.position.copy(parent.position);
+        obj.quaternion.copy(parent.quaternion);
+      }
     }
   });
 
-  /* ========== 取得元素 ========== */
+  /* ========== 取得元素（只宣告一次） ========== */
   const mainImage = document.getElementById("mainImage");
   const mainHit   = document.getElementById("mainHit");
   const sub1Hit   = document.getElementById("sub1Hit");
@@ -209,12 +211,9 @@ document.querySelector("a-scene").addEventListener("loaded", () => {
     mainImage.setAttribute("scale", "1 1 1");
   }
 
-  // 主圖點擊放大
-  const mainImage = document.getElementById("mainImage");
-  const mainHit = document.getElementById("mainHit");
-  let zoom = false;
-
-  mainHit.addEventListener("click", () => {
+  /* ========== 主圖點擊放大 ========== */
+  mainHit.addEventListener("click", (e) => {
+    e.stopPropagation(); // 重要：避免解除鎖定
     mainImage.setAttribute(
       "animation",
       zoom
@@ -224,53 +223,33 @@ document.querySelector("a-scene").addEventListener("loaded", () => {
     zoom = !zoom;
   });
 
-/* ===== sub1 / sub2 點擊 ===== */
-const sub1Hit = document.getElementById("sub1Hit");
-const sub2Hit = document.getElementById("sub2Hit");
-const sub3Hit = document.getElementById("sub3Hit");
+  /* ========== sub 按鈕 ========== */
+  sub1Hit.addEventListener("click", (e) => {
+    e.stopPropagation();
+    resetMain();
+    alert("你點了 sub1 👀");
+  });
 
-function resetMain() {
-  zoom = false;
-  mainImage.setAttribute(
-    "animation",
-    "property: scale; to: 1 1 1; dur: 200"
-  );
-}
+  sub2Hit.addEventListener("click", (e) => {
+    e.stopPropagation();
+    resetMain();
+    alert("你點了 sub2 ✨");
+  });
 
-sub1Hit.addEventListener("click", () => {
-  resetMain();
-  alert("你點了 sub1 👀（之後可換成連結）");
-});
+  sub3Hit.addEventListener("click", (e) => {
+    e.stopPropagation();
+    resetMain();
+    alert("你點了 sub3 🌈");
+  });
 
-sub2Hit.addEventListener("click", () => {
-  resetMain();
-  alert("你點了 sub2 ✨（之後可換成連結）");
-});
-sub3Hit.addEventListener("click", () => {
-  resetMain();
-  alert("你點了 sub3 🌈");
-});
-
-  // IG 連結
-  document.getElementById("igHit").addEventListener("click", () => {
+  /* ========== IG 連結 ========== */
+  igHit.addEventListener("click", (e) => {
+    e.stopPropagation();
     window.open("https://www.instagram.com/kaz._.too/", "_blank");
   });
 
-});
-
-/* ===== 修正版：AR 偵測距離 ===== */
-const scene = document.querySelector("a-scene");
-const statusBar = document.getElementById("ar-status");
-
-let cameraWorldPos = new THREE.Vector3();
-let targetWorldPos = new THREE.Vector3();
-
-scene.addEventListener("loaded", () => {
-  const camera = document.querySelector("a-camera");
-  const target = document.querySelector('a-entity[mindar-image-target="targetIndex: 0"]');
-
+  /* ========== 距離顯示（會真的動） ========== */
   scene.addEventListener("tick", () => {
-    // 只要「曾經掃到過」，就顯示最後距離
     if (!target.object3D.visible) {
       statusBar.innerHTML = "⚠️ 尚未偵測到目標";
       return;
@@ -284,6 +263,7 @@ scene.addEventListener("loaded", () => {
 
     statusBar.innerHTML = `📏 偵測距離：約 ${distanceCm} cm`;
   });
+
 });
 </script>
 
