@@ -140,38 +140,52 @@
 /* ========= 等場景真的 ready 再綁事件（關鍵） ========= */
 document.querySelector("a-scene").addEventListener("loaded", () => {
 
-  // 防抖
-const scene = document.querySelector("a-scene");
-const mindarSystem = scene.systems["mindar-image-system"];
+  const scene = document.querySelector("a-scene");
+  const mindarSystem = scene.systems["mindar-image-system"];
+  const target = document.querySelector('a-entity[mindar-image-target="targetIndex: 0"]');
 
-const target = document.querySelector('a-entity[mindar-image-target="targetIndex: 0"]');
+  let paused = false;
+  let zoom = false;
 
-target.addEventListener("targetFound", () => {
-  if (paused) return;   // 如果已暫停，就不處理
+  /* ========== 掃到就停止追蹤 ========== */
+  target.addEventListener("targetFound", () => {
+    if (paused) return;
 
-  paused = true;        // 進入「鎖定狀態」
-  mindarSystem.pause(); // ⛔ 真的把 MindAR 偵測暫停
+    paused = true;
+    mindarSystem.pause();   // 🔒 真的暫停 MindAR
+    console.log("Target found → tracking paused");
+  });
 
-  console.log("Target found → tracking paused");
-});
+  /* ========== 點一下才恢復追蹤 ========== */
+  function resumeTracking() {
+    paused = false;
+    mindarSystem.unpause(); // 🔓 重新啟動 MindAR
+    console.log("Tracking resumed");
+  }
 
+  /* ========== 讓內容「硬鎖」不平滑（不抖的關鍵） ========== */
   AFRAME.registerComponent("smooth-follow", {
-    schema: { speed: { type: "number", default: 0.15 } },
-    init() {
-      this.targetPos = new THREE.Vector3();
-      this.targetQuat = new THREE.Quaternion();
-    },
     tick() {
       const obj = this.el.object3D;
       const parent = this.el.parentEl.object3D;
 
-      parent.getWorldPosition(this.targetPos);
-      parent.getWorldQuaternion(this.targetQuat);
-
-      obj.position.lerp(this.targetPos, this.data.speed);
-      obj.quaternion.slerp(this.targetQuat, this.data.speed);
+      obj.position.copy(parent.position);
+      obj.quaternion.copy(parent.quaternion);
     }
   });
+
+  /* ========== 取得元素 ========== */
+  const mainImage = document.getElementById("mainImage");
+  const mainHit   = document.getElementById("mainHit");
+  const sub1Hit   = document.getElementById("sub1Hit");
+  const sub2Hit   = document.getElementById("sub2Hit");
+  const sub3Hit   = document.getElementById("sub3Hit");
+  const igHit     = document.getElementById("igHit");
+
+  function resetMain() {
+    zoom = false;
+    mainImage.setAttribute("scale", "1 1 1");
+  }
 
   // 主圖點擊放大
   const mainImage = document.getElementById("mainImage");
