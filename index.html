@@ -57,21 +57,22 @@
     raycaster="objects: .clickable"
   ></a-camera>
 
+  <!-- ==================== TARGET 0 ==================== -->
   <a-entity mindar-image-target="targetIndex: 0">
     <a-entity smooth-follow>
 
       <!-- 主圖 -->
       <a-image
-        id="mainImage"
+        id="mainImage-0"
         src="totennouji.png"
         position="-0.58 0.34 0"
         width="1.5"
         height="1.5"
       ></a-image>
 
-      <!-- 點擊用透明 hit box（一定要比圖更靠近鏡頭） -->
+      <!-- 點擊用透明 hit box -->
       <a-plane
-        id="mainHit"
+        id="mainHit-0"
         position="-0.58 0.34 0.5"
         width="1.6"
         height="1.6"
@@ -88,7 +89,7 @@
       ></a-image>
 
       <a-plane
-        id="igHit"
+        id="igHit-0"
         position="0 -2 0.5"
         width="0.5"
         height="0.5"
@@ -96,21 +97,25 @@
         class="clickable"
       ></a-plane>
 
-<a-entity mindar-image-target="targetIndex: 1">
+    </a-entity>
+  </a-entity>
+
+  <!-- ==================== TARGET 1 ==================== -->
+  <a-entity mindar-image-target="targetIndex: 1">
     <a-entity smooth-follow>
 
       <!-- 主圖 -->
       <a-image
-        id="mainImage"
+        id="mainImage-1"
         src="waynamba.png"
         position="-0.58 0.34 0"
         width="1.5"
         height="1.5"
       ></a-image>
 
-      <!-- 點擊用透明 hit box（一定要比圖更靠近鏡頭） -->
+      <!-- 點擊用透明 hit box -->
       <a-plane
-        id="mainHit"
+        id="mainHit-1"
         position="-0.58 0.34 0.5"
         width="1.6"
         height="1.6"
@@ -127,7 +132,7 @@
       ></a-image>
 
       <a-plane
-        id="igHit"
+        id="igHit-1"
         position="0 -2 0.5"
         width="0.5"
         height="0.5"
@@ -135,16 +140,15 @@
         class="clickable"
       ></a-plane>
 
-
     </a-entity>
   </a-entity>
+
 </a-scene>
 
 <script>
 document.querySelector("a-scene").addEventListener("loaded", () => {
 
   const scene = document.querySelector("a-scene");
-  const target = document.querySelector('a-entity[mindar-image-target="targetIndex: 0"]');
   const statusBar = document.getElementById("ar-status");
 
   let cameraWorldPos = new THREE.Vector3();
@@ -154,10 +158,13 @@ document.querySelector("a-scene").addEventListener("loaded", () => {
   let locked = false;
   let zoom = false;
 
-  /* ========== 目標找到時鎖住畫面（但不暫停 AR） ========== */
-  target.addEventListener("targetFound", () => {
-    locked = true;
-    console.log("Target found → visual locked");
+  const targets = document.querySelectorAll("a-entity[mindar-image-target]");
+
+  targets.forEach((t) => {
+    t.addEventListener("targetFound", () => {
+      locked = true;
+      console.log("Target found:", t.getAttribute("mindar-image-target"));
+    });
   });
 
   scene.addEventListener("click", () => {
@@ -175,12 +182,11 @@ document.querySelector("a-scene").addEventListener("loaded", () => {
     }
   });
 
-  const mainImage = document.getElementById("mainImage");
-  const mainHit   = document.getElementById("mainHit");
-  const sub1Hit   = document.getElementById("sub1Hit");
-  const sub2Hit   = document.getElementById("sub2Hit");
-  const sub3Hit   = document.getElementById("sub3Hit");
-  const igHit     = document.getElementById("igHit");
+  // 只示範抓 target 0 的主圖來做縮放（你原本的邏輯）
+  const mainImage = document.getElementById("mainImage-0");
+  const mainHit   = document.getElementById("mainHit-0");
+  const igHit0    = document.getElementById("igHit-0");
+  const igHit1    = document.getElementById("igHit-1");
 
   function resetMain() {
     zoom = false;
@@ -198,30 +204,17 @@ document.querySelector("a-scene").addEventListener("loaded", () => {
     zoom = !zoom;
   });
 
-  sub1Hit.addEventListener("click", (e) => {
-    e.stopPropagation();
-    resetMain();
-    alert("你點了 sub1 👀");
-  });
-
-  sub2Hit.addEventListener("click", (e) => {
-    e.stopPropagation();
-    resetMain();
-    alert("你點了 sub2 ✨");
-  });
-
-  sub3Hit.addEventListener("click", (e) => {
-    e.stopPropagation();
-    resetMain();
-    alert("你點了 sub3 🌈");
-  });
-
-  igHit.addEventListener("click", (e) => {
+  igHit0.addEventListener("click", (e) => {
     e.stopPropagation();
     window.open("https://www.instagram.com/kaz._.too/", "_blank");
   });
 
-  /* ========== 正確的距離顯示 ========== */
+  igHit1.addEventListener("click", (e) => {
+    e.stopPropagation();
+    window.open("https://www.instagram.com/kaz._.too/", "_blank");
+  });
+
+  /* ========== 距離顯示（支援多 target） ========== */
   scene.addEventListener("tick", () => {
 
     if (!camera) {
@@ -229,13 +222,18 @@ document.querySelector("a-scene").addEventListener("loaded", () => {
       if (!camera) return;
     }
 
-    if (!target.object3D.visible) {
+    let activeTarget = null;
+    targets.forEach((t) => {
+      if (t.object3D.visible) activeTarget = t;
+    });
+
+    if (!activeTarget) {
       statusBar.innerHTML = "⚠️ 尚未偵測到目標";
       return;
     }
 
     camera.object3D.getWorldPosition(cameraWorldPos);
-    target.object3D.getWorldPosition(targetWorldPos);
+    activeTarget.object3D.getWorldPosition(targetWorldPos);
 
     const distanceMeters = cameraWorldPos.distanceTo(targetWorldPos);
 
