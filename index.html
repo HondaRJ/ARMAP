@@ -96,6 +96,46 @@
         class="clickable"
       ></a-plane>
 
+<a-entity mindar-image-target="targetIndex: 1">
+    <a-entity smooth-follow>
+
+      <!-- 主圖 -->
+      <a-image
+        id="mainImage"
+        src="waynamba.png"
+        position="-0.58 0.34 0"
+        width="1.5"
+        height="1.5"
+      ></a-image>
+
+      <!-- 點擊用透明 hit box（一定要比圖更靠近鏡頭） -->
+      <a-plane
+        id="mainHit"
+        position="-0.58 0.34 0.5"
+        width="1.6"
+        height="1.6"
+        material="opacity: 0.001; transparent: true; depthTest: false; depthWrite: false"
+        class="clickable"
+      ></a-plane>
+
+      <!-- IG icon -->
+      <a-image
+        src="ig.png"
+        position="0 -2 0"
+        width="0.3"
+        height="0.3"
+      ></a-image>
+
+      <a-plane
+        id="igHit"
+        position="0 -2 0.5"
+        width="0.5"
+        height="0.5"
+        material="opacity: 0.001; transparent: true; depthTest: false; depthWrite: false"
+        class="clickable"
+      ></a-plane>
+
+
     </a-entity>
   </a-entity>
 </a-scene>
